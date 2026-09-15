@@ -3,6 +3,7 @@ import { useState, type FormEvent } from 'react';
 import { ArrowLeft, ArrowRight, Eye, EyeOff, Heart, LoaderCircle, LockKeyhole } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { requestJson } from '@/lib/forever/client';
+import { ThemeToggle } from './theme-toggle';
 
 export function LoginForm({ configured, returnTo }: { configured: boolean; returnTo: string }) {
   const [password, setPassword] = useState(''), [visible, setVisible] = useState(false);
@@ -16,6 +17,7 @@ export function LoginForm({ configured, returnTo }: { configured: boolean; retur
     } catch (e) { setError(e instanceof Error ? e.message : 'Bitte versuche es noch einmal.'); setBusy(false); }
   }
   return <main className="login-page">
+    <div className="login-theme"><ThemeToggle /></div>
     <a className="login-brand" href="/"><Heart size={23} strokeWidth={1.5} /> Für immer.</a>
     <section className="login-card" aria-labelledby="login-title">
       <div className="login-lock"><LockKeyhole size={26} strokeWidth={1.5} /></div>

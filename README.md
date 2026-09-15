@@ -27,6 +27,7 @@ Die vorherige Version verwendete Vinext/Vite und Cloudflare-Bindings; sie erzeug
 - Foto-Upload mit automatischer Verkleinerung und Kompression. Originale bis 25 MB; Upload höchstens 3 MB, passend für Netlifys Funktionsgrenzen.
 - Einstellbare Namen, Startdatum und Zeitzone. Schutz vor dem Verwerfen ungespeicherter Eingaben und vor dem Überschreiben einer inzwischen bearbeiteten Erinnerung.
 - Responsive Oberfläche in warmem Weiß/Rosé, Tastaturbedienung, reduzierte Animationen bei entsprechender Systemeinstellung.
+- Hell-/Dunkelmodus über den Sonnen-/Mondschalter im Kopfbereich und auf der Loginseite. Die erste Darstellung folgt dem System; die eigene Auswahl bleibt gespeichert und gilt auch für Karte, Pop-ups und Verwaltung.
 
 ## Speicherung und Zugang
 
