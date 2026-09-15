@@ -17,7 +17,12 @@ export async function compressPhoto(file: File): Promise<File> {
     canvas.width = Math.max(1, Math.round(img.naturalWidth * scale)); canvas.height = Math.max(1, Math.round(img.naturalHeight * scale));
     const ctx = canvas.getContext('2d'); if (!ctx) throw new Error('Das Foto konnte nicht vorbereitet werden.');
     ctx.fillStyle = '#ffffff'; ctx.fillRect(0, 0, canvas.width, canvas.height); ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
-    const blob = await new Promise<Blob>((resolve, reject) => canvas.toBlob(b => b ? resolve(b) : reject(new Error('Bitte wähle ein anderes Foto.')), 'image/jpeg', 0.88));
+    let blob: Blob | null = null;
+    for (const quality of [0.88, 0.76, 0.64, 0.5]) {
+      blob = await new Promise<Blob>((resolve, reject) => canvas.toBlob(b => b ? resolve(b) : reject(new Error('Bitte wähle ein anderes Foto.')), 'image/jpeg', quality));
+      if (blob.size <= 3 * 1024 * 1024) break;
+    }
+    if (!blob || blob.size > 3 * 1024 * 1024) throw new Error('Das Foto ist zu groß. Bitte wähle eine kleinere Version.');
     return new File([blob], 'erinnerung.jpg', { type: 'image/jpeg' });
   } finally { URL.revokeObjectURL(url); }
 }

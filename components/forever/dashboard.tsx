@@ -75,7 +75,7 @@ export function Dashboard() {
     <main>
       <section id="zuhause" className="dashboard-section content-width">
         <div className="dashboard-heading"><div><p className="hello">Hey {settings.firstName}, schön, dass du da bist <Heart size={15} /></p><h1>Unser kleines <em>Für immer.</em></h1></div><span className="heading-note">Ein Zuhause für<br />alles, was uns ausmacht.</span></div>
-        {error && <div className="notice error-notice" role="alert"><p>{error}</p><Button variant="outline" onClick={load}><RefreshCw size={16} />Erneut laden</Button><a href="/signin-with-chatgpt?return_to=%2F" target="_top">Neu anmelden</a></div>}
+        {error && <div className="notice error-notice" role="alert"><p>{error}</p><Button variant="outline" onClick={load}><RefreshCw size={16} />Erneut laden</Button><a href="/login?returnTo=%2F">Neu anmelden</a></div>}
         <Timer settings={settings} />
         <div className="little-moments">
           <section className="compliment-panel"><div className="panel-label"><Heart size={16} /><h2>Ein kleiner Liebesbrief</h2><span>für heute</span></div><blockquote key={compliment}>{COMPLIMENTS[compliment]}</blockquote><div className="compliment-footer"><span>Für dich, {settings.firstName}. <span className="signature-heart">♡</span></span><Button variant="ghost" size="icon" onClick={changeCompliment} aria-label="Ein anderes Kompliment anzeigen"><Shuffle size={18} /></Button></div></section>

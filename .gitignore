@@ -47,3 +47,7 @@ next-env.d.ts
 
 !.env.example
 *.tsbuildinfo
+
+# Local Netlify emulation and generated deployment files
+.netlify/
+.test-runtime/

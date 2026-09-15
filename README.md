@@ -1,86 +1,68 @@
 # Unser kleines Für immer
 
-Ein persönliches Erinnerungsjournal für Leticia und Gérôme: eine ruhige Oberfläche in warmem Weiß und Rosé, ein Live-Beziehungszähler, kleine Liebesbriefe, spontane Ideen und eine interaktive Erinnerungskarte.
+Ein persönliches Erinnerungs-Dashboard für Leticia und Gérôme, gebaut mit **Next.js, React, TypeScript und Leaflet**. Diese Version läuft direkt auf **Netlify**. Anmeldung und Speicherung benötigen weder einen ChatGPT-Account noch Supabase oder einen anderen Dienst.
 
-## Benutzen
+## Auf Netlify starten
 
-Die Startseite zeigt eure Zeit und die Karte. Über **Verwalten** oder `/admin` kann der Besitzer neue Orte hinzufügen, Pins verschieben, Texte und Fotos bearbeiten sowie Erinnerungen löschen. Eine Bestätigung schützt vor versehentlichem Löschen und vor dem Verwerfen ungespeicherter Änderungen.
+1. Dieses GitHub-Repository mit dem Netlify-Projekt verbinden. Branch: `main`, Basisverzeichnis: Repository-Wurzel.
+2. Unter **Project configuration → Environment variables** eine Variable `ADMIN_PASSWORD` mit einem eigenen, langen Passwort (mindestens 12 Zeichen) anlegen. Der Geltungsbereich muss **Functions** enthalten; „All scopes“ funktioniert ebenfalls. Das Passwort niemals in GitHub eintragen.
+3. Deploy starten. Die mitgelieferte `netlify.toml` setzt **Build command: `pnpm run build`** und **Publish directory: `.next`**. Netlify erkennt Next.js automatisch und installiert den aktuellen Adapter.
+4. Die Website öffnen und oben **Verwalten** wählen. Mit dem Admin-Passwort anmelden und Pins, Bilder oder eure Namen bearbeiten.
 
-Unter **Unser Anfang** lassen sich Namen, Datum, Uhrzeit und Zeitzone ändern. Der voreingestellte **12. Oktober 2023, 20:00 Uhr, Europe/Berlin** ist ausdrücklich ein Platzhalter. Alle drei ersten Erinnerungen sind fiktive, gekennzeichnete Beispiele an echten Koordinaten. Die Fotos sind Unsplash-Symbolbilder, keine persönlichen Paarfotos und keine Ortsnachweise.
+Nach einer Passwortänderung in Netlify erneut deployen. Bestehende Sitzungen werden dann ungültig. Ein fehlendes oder zu kurzes Passwort lässt den Adminbereich gesperrt; die Loginseite zeigt die Einrichtung an.
 
-Die Überraschungen enthalten 6 Date-Ideen, 6 Beispiel-Gutscheine und 6 kleine Quatsch-/Insider-Vorlagen. Sie werden pro Kategorie ohne direkte Wiederholung aus einem gemischten Vorrat gezogen. Die 24 Komplimente wechseln zufällig beim Laden und auf Knopfdruck. Eigene Texte können in `lib/forever/content.ts` ergänzt werden.
+**Sichtbarkeit:** Das Dashboard ist standardmäßig öffentlich, die Verwaltung nur mit Admin-Passwort zugänglich. Wer auch die Karte und Bilder privat halten möchte, legt zusätzlich `JOURNAL_PASSWORD` (mindestens 12 Zeichen) an und deployt erneut. Dieses zweite Passwort erlaubt ausschließlich das Ansehen. Das Admin-Passwort öffnet beide Bereiche. Es gibt keine externe Anmeldung.
 
-## Technik
+### Der frühere Netlify-Build-Fehler
 
-- React 19, TypeScript und Vinext mit App Router; Vite erzeugt einen Cloudflare-Worker.
-- Leaflet **1.9.4 über CDN**, mit gepinnten URLs und Subresource Integrity.
-- OpenStreetMap-Rastertiles, per CSS dezent entsättigt. Kein Google-Maps- oder anderer Karten-API-Key.
-- Dauerhafte Datenspeicherung in D1, Fotos in einem privaten R2-Bucket. Keine Erinnerungsdaten in localStorage.
-- Die drei Beispieldatensätze werden atomar genau einmal initialisiert. Gelöschte Beispiele kommen nicht zurück.
-- Geschützte serverseitige API; SIWC-/Sites-Identität, Besitzerberechtigung, Same-Origin-Prüfung, serverseitige Validierung und Größenlimits.
-- Eine Revisionsnummer schützt vor dem Überschreiben zwischen zwei offenen Fenstern.
-- Bilder werden vor dem Upload auf maximal 2.000 Pixel Kantenlänge verkleinert. Der Server erlaubt nur JPEG, PNG und WebP und prüft die Dateisignatur. Die API akzeptiert maximal 8 MB pro Foto; Originale im Browser bis 25 MB.
-- Die Anzeige aktualisiert Daten bei Rückkehr zum Tab und im sichtbaren Tab alle 60 Sekunden.
-- Responsive Oberflächen, Tastaturbedienung, zugängliche Dialoge, reduzierte Bewegung und Lade-/Fehlerzustände.
+Die vorherige Version verwendete Vinext/Vite und Cloudflare-Bindings; sie erzeugte keinen normalen Next.js-Build. Das Netlify-Plugin konnte deshalb im Publish-Verzeichnis keine erwarteten Artefakte finden. Diese Version baut mit `next build --webpack` tatsächlich nach `.next` und ersetzt auch die inkompatiblen Daten- und Authentifizierungsdienste. Bei einem alten fehlgeschlagenen Deploy einmal **Clear cache and deploy site** ausführen. Keine zusätzliche, alte oder fest auf Version 4 gesetzte Next.js-Plugin-Konfiguration verwenden.
 
-### Warum keine CARTO-Positron-Tiles?
+## Funktionen
 
-Die aktuelle [CARTO-Dokumentation](https://github.com/CartoDB/basemap-styles) verlangt einen API-Key und weist bei Rastertiles auf deren Auslaufen hin. Damit das Projekt ohne zusätzlichen Schlüssel startet, verwendet es OpenStreetMap mit einer sanften Darstellung. Sichtbare [OpenStreetMap-Attribution](https://www.openstreetmap.org/copyright), normale Browser-Caches und ein gültiger Origin-Referrer bleiben erhalten. Keine Offline-Downloads, Scraping- oder Prefetch-Funktion. [Tile-Nutzungsrichtlinie](https://operations.osmfoundation.org/policies/tiles/).
+- Sekundengenauer Kalender-Zähler ab **12. Oktober 2023, 20:00 Uhr, Europe/Berlin**, mit Monatslängen, Schaltjahren und Sommerzeit.
+- 24 wechselnde Komplimente und 18 Überraschungen: Date-Ideen, kleine Gutscheine und Insider-Platzhalter.
+- Leaflet 1.9.4 über CDN mit Integritätsprüfung, frei nutzbaren OpenStreetMap-Kacheln und dezenter Darstellung. Kein Google-Maps-Key.
+- Drei ausdrücklich als Beispiele markierte Erinnerungen an Alster, Lübeck und Ostsee, mit Unsplash-Fotos.
+- Vollständiger Adminbereich: Pins per Kartenklick oder Koordinaten setzen, verschieben, bearbeiten und löschen; Datum, Kategorie, Text und Foto pflegen.
+- Foto-Upload mit automatischer Verkleinerung und Kompression. Originale bis 25 MB; Upload höchstens 3 MB, passend für Netlifys Funktionsgrenzen.
+- Einstellbare Namen, Startdatum und Zeitzone. Schutz vor dem Verwerfen ungespeicherter Eingaben und vor dem Überschreiben einer inzwischen bearbeiteten Erinnerung.
+- Responsive Oberfläche in warmem Weiß/Rosé, Tastaturbedienung, reduzierte Animationen bei entsprechender Systemeinstellung.
 
-Leaflet-CDN und Tiles werden im Browser geladen. Bei einer externen Störung zeigt die Seite eine Meldung und bietet einen erneuten Versuch; die Erinnerungsliste und die Detailansicht bleiben zugänglich.
+## Speicherung und Zugang
 
-## Zugriff und erster Besitzer
+**Netlify Blobs** speichert das Journal und die Bilder dauerhaft im eigenen Netlify-Projekt. Produktionsdaten bleiben bei neuen Deploys erhalten. Vorschau- und Branch-Deploys nutzen getrennte Speicher. Änderungen verwenden starke Lesekonsistenz und atomare ETag-Vergleiche; gelöschte Beispiele erscheinen nicht erneut.
 
-Die veröffentlichte Site startet privat. Der Sites-Zugriff regelt, wer sie besuchen kann. Leser dürfen Erinnerungen ansehen; nur der Besitzer darf sie verändern. Die Site versendet keine Einladungen automatisch.
+Passwörter bleiben serverseitige Umgebungsvariablen. Zeitlich begrenzte, signierte Sitzungen verwenden HttpOnly-/SameSite-Cookies, unter HTTPS zusätzlich Secure. Jede Schreibroute prüft das Adminrecht und den Request-Ursprung. Loginversuche werden im Speicher begrenzt. Bilder werden nur über die entsprechend geschützte API ausgeliefert. Im optionalen privaten Modus gilt der Passwortschutz auch für Lesedaten und Fotos.
 
-`ADMIN_BOOTSTRAP_EMAIL` wird als private Laufzeitvariable gesetzt. Beim ersten Aufruf durch die passende, von der Plattform bestätigte Identität wird deren **Site-spezifische stabile User-ID** atomar in der Tabelle `admins` hinterlegt. Danach entscheidet ausschließlich diese ID. Die E-Mail-Adresse steckt weder im Frontend noch im Repository. Die Variable kann nach dem Bootstrap entfernt werden.
+Ein früherer Sites-/Cloudflare-Speicher wird nicht automatisch nach Netlify kopiert. Die Beispielinhalte sind im Code enthalten; persönliche Daten liegen ausschließlich im jeweiligen Hosting-Projekt. Speicherlimits und Abrechnung richten sich nach dem eigenen Netlify-Tarif.
 
-Die Header `oai-authenticated-user-id` und `oai-authenticated-user-email` müssen vom vertrauenswürdigen Sites-Dispatcher stammen. Die Anwendung darf nicht unverändert hinter einem beliebigen öffentlich erreichbaren Proxy betrieben werden, der diese Header vom Besucher durchreicht. Ein Umzug auf anderes Hosting benötigt eine gleichwertige Authentifizierung.
+## Lokal entwickeln
 
-D1 und R2 machen eine separate Supabase-Instanz für dieses Projekt überflüssig. Es werden keine vorhandenen Supabase-Projekte verändert. GitHub speichert den Quellcode; ein reines GitHub-Pages-Hosting unterstützt diese Serverfunktionen nicht.
-
-## Entwickeln und prüfen
-
-Die Website lässt sich im Browser ohne lokale Installation verwenden. Für lokale Entwicklung benötigt man Node.js ab 22.13.0 und die im `packageManager` festgelegte pnpm-Version.
+Node.js **22.13 oder neuer** und pnpm verwenden:
 
 ```sh
-corepack enable
 pnpm install --frozen-lockfile
-pnpm exec tsc --noEmit
-node tests/logic.test.cjs
-pnpm run build
-node tests/worker.test.mjs
+cp .env.example .env.local
+# Eigenes ADMIN_PASSWORD in .env.local setzen
+pnpm dev
 ```
 
-`tests/worker.test.mjs` startet keine öffentliche Vorschau. Es führt das echte kompilierte Worker-Modul mit temporären, isolierten D1-/R2-Daten aus. Alle Testidentitäten und Testbilder existieren nur dort; es werden keine Produktionskonten oder produktiven Datensätze angelegt.
+Der Entwicklungsbefehl startet einen lokalen Netlify-Blobs-Emulator. Daten liegen nur für lokale Entwicklung unter `.netlify/local-blobs/`. Ein Netlify-Konto wird lokal nicht benötigt. Unter `http://localhost:3000` ist die Website erreichbar. Die lokale Passwortdatei und lokale Daten werden nicht eingecheckt.
 
-Der Workflow `.github/workflows/ci.yml` führt dieselben Prüfungen bei Push und Pull Request aus. Der Lockfile ist verbindlich. Secrets gehören ausschließlich in lokale ignorierte Umgebungsdateien beziehungsweise Laufzeitvariablen der Hosting-Plattform.
+```sh
+pnpm test
+pnpm build
+pnpm test:integration
+```
 
-### Datenbankschema
+Die Integrationstests starten den echten Next.js-Produktionsserver mit einem temporären Blobs-Speicher und prüfen Zugang, Speichern, Konflikte, Uploads sowie Daten nach einem Neustart. GitHub Actions führt diese Prüfungen ebenfalls aus.
 
-Schema: `db/schema.ts`; generierte Migrationen: `drizzle/`. Schemaänderungen erzeugen mit `pnpm run db:generate` eine neue Migration. Bereits veröffentlichte Migrationen nicht umschreiben. Produktionsmigrationen werden beim Sites-Deployment eingespielt. Die Beispieldaten werden getrennt vom Schema im ersten authentifizierten Zugriff initialisiert.
+## Inhalte anpassen
 
-### Verzeichnisse
+- `lib/forever/content.ts`: Komplimente, Überraschungen und Beispiel-Erinnerungen.
+- `components/forever/`: Dashboard, Karte, Login und Verwaltung.
+- `app/globals.css`: Design und responsive Layouts.
+- `lib/forever/storage.ts`: Netlify-Speicherung und Schreibkonflikte.
+- `lib/forever/password.ts`: Passwortprüfung und Sitzungen.
 
-| Pfad | Inhalt |
-| --- | --- |
-| `app/page.tsx`, `components/forever/dashboard.tsx` | Dashboard und Erinnerungsansicht |
-| `components/forever/memory-map.tsx` | Leaflet-Karte, Marker, sichere Popups und Pin-Auswahl |
-| `app/admin`, `components/forever/admin-panel.tsx` | Geschützte Verwaltung |
-| `app/api` | Persistenz, Einstellungen, Fotos |
-| `lib/forever/time.ts` | Kalendergenauer Timer mit Zeitzonen |
-| `lib/forever/content.ts` | Komplimente, Ideen, Platzhalter |
-| `lib/forever/server.ts` | Serverrechte, Datenbank, Initialisierung und Fehlerbehandlung |
-| `.openai/hosting.json` | Projektidentität und logische Speicherbindungen |
-
-## Fotoquellen
-
-1. See und Steg: [Jan Huber / Unsplash](https://unsplash.com/photos/brown-wooden-dock-on-lake-during-sunset-dXg_3gWI9YQ).
-2. Historische Straße in Riga (Symbolbild für einen Stadtbummel): [Carolin Thiergart / Unsplash](https://unsplash.com/photos/a-city-street-filled-with-lots-of-tall-buildings-VyCxq9IyYcs).
-3. Meer bei Sonnenuntergang: [Andrus Lukas / Unsplash](https://unsplash.com/photos/the-sun-is-setting-over-the-ocean-with-rocks-in-the-water-FV4LK5pHtmo).
-
-## Prüfgrenzen
-
-Automatisierte Prüfungen decken Kalenderlogik, Validierung, echte Server-Routen, Zugriffsrechte, Konflikte, Persistenz und Uploads ab. Eine visuelle Browserprüfung wurde in dieser Umgebung nicht ausgeführt; externe Unsplash-Dateien konnten wegen Netzbeschränkungen nicht direkt abgerufen werden. Für fehlende Bilder ist eine sichtbare Ersatzanzeige vorhanden.
-
-Optionale WebMCP-Werkzeuge ermöglichen das Auflisten vorhandener Erinnerungen und das Anzeigen eines Pins. Sie sind nur aktiv, wenn der Browser `document.modelContext` unterstützt. Die Ausführung in einem echten unterstützten WebMCP-Browser war hier nicht verfügbar.
+[Next.js auf Netlify](https://opennext.js.org/netlify) · [Netlify Blobs](https://docs.netlify.com/build/data-and-storage/netlify-blobs/) · [Leaflet](https://leafletjs.com/) · [OpenStreetMap-Kacheln](https://operations.osmfoundation.org/policies/tiles/)

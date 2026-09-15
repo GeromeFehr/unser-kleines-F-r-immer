@@ -89,7 +89,7 @@ export function AdminPanel() {
     } catch(e) { setError(errorText(e)); } finally { setSaving(false); }
   }
   return <>
-    <div onClickCapture={event => { const anchor = (event.target as HTMLElement).closest('a[href="/"]'); if (anchor && (dirty || settingsDirty)) { event.preventDefault(); guard(() => { skipUnload.current = true; location.href = '/'; }); } }}><Header settings={journal?.settings || DEFAULT_SETTINGS} admin /></div>
+    <div onClickCapture={event => { const anchor = (event.target as HTMLElement).closest('a[href="/"]'); if (anchor && (dirty || settingsDirty)) { event.preventDefault(); guard(() => { skipUnload.current = true; location.href = '/'; }); } }}><Header settings={journal?.settings || DEFAULT_SETTINGS} admin guardLogout={action => guard(() => { skipUnload.current = true; action(); })} /></div>
     <main className="admin-main content-width"><div className="admin-heading"><div><p className="section-kicker"><Heart size={16} />Mit Liebe festhalten</p><h1>Platz für <em>eure Geschichte.</em></h1><p>Lieblingsorte sammeln, Fotos hinzufügen und kleine Momente bewahren.</p></div><span className="admin-secure"><Settings2 size={16} />Deine Verwaltung</span></div>
       <div aria-live="polite">{success && <div className="notice success-notice"><Check size={18} /><p>{success}</p><button aria-label="Hinweis schließen" onClick={() => setSuccess('')}><X size={17} /></button></div>}</div>
       {error && <div className="notice error-notice" role="alert"><p>{error}</p><Button variant="outline" disabled={busy} onClick={() => guard(() => { reset(); void load(); })}><RefreshCw size={16} />Liste neu laden</Button></div>}

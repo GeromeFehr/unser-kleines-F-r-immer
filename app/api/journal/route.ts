@@ -1,12 +1,10 @@
-import { database, ensureJournal, failure, getSettings, isAdmin, json, memoryColumns, normalizeMemory, viewer } from '@/lib/forever/server';
-import type { Memory } from '@/lib/forever/types';
+import { failure, json, viewer } from '@/lib/forever/server';
+import { readJournal } from '@/lib/forever/storage';
+export const dynamic = 'force-dynamic';
 export async function GET() {
   try {
-    const user = await viewer(); await ensureJournal();
-    const [rows, settings, allowed] = await Promise.all([
-      database().prepare(`SELECT ${memoryColumns} FROM memories ORDER BY date DESC, created_at DESC`).all<Memory>(),
-      getSettings(), isAdmin(user),
-    ]);
-    return json({ memories: rows.results.map(normalizeMemory), settings, isAdmin: allowed });
+    const session = await viewer();
+    const { memories, settings } = await readJournal();
+    return json({ memories, settings, isAdmin: session?.role === 'admin' });
   } catch (e) { return failure(e); }
 }

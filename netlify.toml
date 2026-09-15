@@ -1,0 +1,17 @@
+[build]
+  command = "pnpm run build"
+  publish = ".next"
+
+[build.environment]
+  NODE_VERSION = "22"
+  PNPM_FLAGS = "--shamefully-hoist"
+
+# Netlify detects Next.js and supplies its current adapter automatically.
+# ADMIN_PASSWORD belongs in Netlify's environment variables, never in this file.
+
+[[headers]]
+  for = "/*"
+  [headers.values]
+    X-Content-Type-Options = "nosniff"
+    Referrer-Policy = "strict-origin-when-cross-origin"
+    X-Frame-Options = "DENY"
