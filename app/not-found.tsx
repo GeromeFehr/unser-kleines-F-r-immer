@@ -1,0 +1,1 @@
+export default function NotFound() { return <main className="access-state"><h1>Hier sind wir noch nicht gewesen.</h1><p>Diese Seite gibt es nicht. Eure Erinnerungen warten auf der Startseite.</p><a href="/">Zurück zu uns</a></main>; }
